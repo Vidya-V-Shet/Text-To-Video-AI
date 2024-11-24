@@ -1,8 +1,9 @@
 import edge_tts
 
-async def generate_audio(text,outputFilename):
-    communicate = edge_tts.Communicate(text,"en-AU-WilliamNeural")
-    await communicate.save(outputFilename)
+# Function to generate audio with selected voice
+async def generate_audio(text, output_filename, voice):
+    communicate = edge_tts.Communicate(text, voice)
+    await communicate.save(output_filename)
 
 
 
