@@ -1,3 +1,4 @@
+import edge_tts
 import streamlit as st
 import asyncio
 from base64 import b64encode
@@ -19,7 +20,7 @@ def display_video(video_path):
         st.error("Video file not found. Please try again.")
 
 # Function to generate the video from the topic
-async def generate_video_from_topic(topic):
+async def generate_video_from_topic(topic, voice):
     SAMPLE_FILE_NAME = "audio_tts.wav"
     VIDEO_SERVER = "pexel"
 
@@ -29,10 +30,11 @@ async def generate_video_from_topic(topic):
         st.error("Failed to generate script. Please try again.")
         return
     st.success("Script generated successfully!")
-    st.write(f"**Generated Script:** {response}")
+    st.write(f"*Generated Script:* {response}")
 
     # Generate audio
-    await generate_audio(response, SAMPLE_FILE_NAME)
+    st.info(f"Generating audio using voice: {voice}")
+    await generate_audio(response, SAMPLE_FILE_NAME, voice)
 
     # Generate timed captions
     timed_captions = generate_timed_captions(SAMPLE_FILE_NAME)
@@ -50,7 +52,7 @@ async def generate_video_from_topic(topic):
     if background_video_urls:
         output_video = get_output_media(SAMPLE_FILE_NAME, timed_captions, background_video_urls, VIDEO_SERVER)
         st.success("Video rendered successfully!")
-        st.write("**Final Video:**")
+        st.write("*Final Video:*")
         display_video(output_video)
     else:
         st.error("Failed to render video. Please try again.")
@@ -62,9 +64,29 @@ st.write("Enter a topic to generate a script and create a video!")
 # User input
 topic = st.text_input("Enter a topic:", placeholder="e.g., Fruits, AI, or Nature")
 
-if st.button("Generate Video"):
+# Audio voice options
+st.write("Select the voice settings:")
+gender = st.radio("Select Gender:", ("Male", "Female"))
+accent = st.selectbox("Select Accent:", ("British", "American"))
+
+# Mapping gender and accent to Edge TTS voice names
+voice_mapping = {
+    ("Male", "British"): "en-GB-RyanNeural",
+    ("Female", "British"): "en-GB-LibbyNeural",
+    ("Male", "American"): "en-US-GuyNeural",
+    ("Female", "American"): "en-US-JennyNeural",
+}
+
+try:
+    voice = voice_mapping[(gender, accent)]
+    st.write(f"Selected Voice: {voice}")  # Debug log for verification
+except KeyError:
+    st.error("Invalid voice selection. Please check your input.")
+    voice = None
+
+if st.button("Generate Video") and voice:
     if topic.strip():
         st.info("Processing your request. Please wait...")
-        asyncio.run(generate_video_from_topic(topic))
+        asyncio.run(generate_video_from_topic(topic, voice))
     else:
         st.error("Please enter a valid topic!")
