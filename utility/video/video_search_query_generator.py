@@ -60,7 +60,7 @@ def getVideoSearchQueriesTimed(script,captions_timed):
             except Exception as e:
                 print("content: \n", content, "\n\n")
                 print(e)
-                content = fix_json(content.replace("```json", "").replace("```", ""))
+                content = fix_json(content.replace("json", "").replace("", ""))
                 out = json.loads(content)
         return out
     except Exception as e:
@@ -88,6 +88,22 @@ Timed Captions:{}
     print("Text", text)
     log_response(LOG_TYPE_GPT,script,text)
     return text
+
+def generate_fallback_video(diffusion_pipeline, empty_intervals):
+    print(f"Generating fallback video for intervals: {empty_intervals}")
+    generated_images = []
+
+    for interval in empty_intervals:
+        prompt = f"Visual representation for interval {interval[0]} to {interval[1]}"
+        image = diffusion_pipeline(prompt).images[0]
+        image_path = f"generated_{interval[0]}_{interval[1]}.png"
+        image.save(image_path)
+        generated_images.append(image_path)
+
+    # If videos are needed, combine generated images into a video (e.g., using FFmpeg)
+    video_path = f"fallback_video_{empty_intervals[0][0]}_{empty_intervals[-1][0][1]}.mp4"
+    # Combine generated_images into a video using your preferred method (FFmpeg, etc.)
+    return video_path
 
 def merge_empty_intervals(segments):
     merged = []
