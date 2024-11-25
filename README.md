@@ -2,8 +2,6 @@
 
 Generate video from text using AI
 
-### Youtube Tutorial -> https://www.youtube.com/watch?v=AXo6VfRUgic
-
 ### Demo Video
 
 https://github.com/user-attachments/assets/1e440ace-8560-4e12-850e-c532740711e7
