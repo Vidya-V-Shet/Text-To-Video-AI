@@ -57,8 +57,36 @@ async def generate_video_from_topic(topic, voice):
     else:
         st.error("Failed to render video. Please try again.")
 
-# Streamlit frontend
-st.title("Text-to-Video Generator")
+# Sidebar for "About" section
+with st.sidebar:
+    st.header("About")
+  
+    st.write("""
+        **Script2Scene**:
+        This tool generates a video from a given text topic. Here's how it works:
+        1. **Script Generation**: The model creates a script based on the topic using AI.
+        2. **Audio Generation**: Converts the script into speech using Edge TTS.
+        3. **Captioning**: Generates timed captions for the audio.
+        4. **Video Generation**: Creates a video by finding relevant background footage.
+        5. **Rendering**: Combines audio, captions, and background video into the final output.
+        """)
+
+from PIL import Image
+import streamlit as st
+
+# Load and display the logo
+logo_path = "/content/Screenshot_2024-11-27_011040-removebg-preview.png"
+logo = Image.open(logo_path)
+
+# Create two columns: one for the logo and one for the title
+col1, col2 = st.columns([1, 4])  # Adjust column proportions as needed
+with col1:
+    st.image(logo, use_container_width=True)  # Use the updated parameter
+with col2:
+    st.markdown("<h1 style='color: #4CAF50; margin: 0;'>Script2Scene</h1>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: #555; font-style: italic;'>Where Your Ideas Become Videos 🎬✨</h4>", unsafe_allow_html=True)
+
+
 st.write("Enter a topic to generate a script and create a video!")
 
 # User input
@@ -89,4 +117,4 @@ if st.button("Generate Video") and voice:
         st.info("Processing your request. Please wait...")
         asyncio.run(generate_video_from_topic(topic, voice))
     else:
-        st.error("Please enter a valid topic!")
+        st.error("Please enter a valid topic!") 
